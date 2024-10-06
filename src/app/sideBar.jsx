@@ -92,7 +92,7 @@ export default function ResponsiveDrawer(props) {
       <List>
         {['Profile', 'Settings', 'Login'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton onClick={()=>{handleSideBarBtnAction(text)}}>
+            <ListItemButton onClick={() => {handleSideBarBtnAction(text)}}>
               <ListItemIcon>
                 <IconSelector name={text} />
               </ListItemIcon>
@@ -161,9 +161,10 @@ export default function ResponsiveDrawer(props) {
           {drawer}
         </Drawer>
       </Box>
+
       <Box
         component="main"
-        sx={{flexGrow: 1, py: 2, pt:10, px:2, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{flexGrow: 1, p:1, pt:9, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <TodoArea/>
         <Toolbar />

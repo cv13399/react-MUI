@@ -39,7 +39,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  padding: 20,
+  padding: 10,
   marginTop: '10vh',
   '&::before': {
     content: '""',
@@ -63,13 +63,15 @@ export default function SignIn(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
+  const {modalOpen, onClose} = props;
+  const handleClickOpen = (event) => {
     setOpen(true);
+    event.stopPropagation(); 
   };
 
-  const handleClose = () => {
+  const handleClose = (event) => {
     setOpen(false);
+    event.stopPropagation(); 
   };
 
   const handleSubmit = (event) => {
@@ -79,9 +81,11 @@ export default function SignIn(props) {
       email: data.get('email'),
       password: data.get('password'),
     });
+    event.stopPropagation(); 
   };
 
-  const validateInputs = () => {
+  const validateInputs = (event) => {
+    event.stopPropagation(); 
     const email = document.getElementById('email');
     const password = document.getElementById('password');
 
@@ -109,11 +113,11 @@ export default function SignIn(props) {
   };
 
   return (
-    <AppTheme {...props}>
+    <AppTheme {...props} >
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-        <Card variant="outlined">
+        <Card variant="outlined"> 
           {/* <SitemarkIcon /> */}
           <Typography
             component="h1"

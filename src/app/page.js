@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ResponsiveDrawer from './SideBar';
 import SignIn from './SignInModal';
-import { Modal } from '@mui/material';
+import { Box, Modal } from '@mui/material';
+import TodoArea from './TodoArea';
+
 
 const theme = createTheme({
   palette: {
@@ -16,16 +18,23 @@ export default function App() {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
+  const handleSideBarBtnAction = (text) => {
+    if (text === "Login") {
+      setOpen(true);
+    }
+    console.log("From main page!!!! " + text);
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <Modal open={open} onClose={handleClose}>
-        <SignIn/>
+        <div>
+          <Box onClick={handleClose}>
+            <SignIn/>
+          </Box>
+        </div>
       </Modal>
-      <ResponsiveDrawer handleSideBarBtnAction={() => {
-        setOpen(true);
-        console.log("Modal opened!");
-      }}/>
+      <ResponsiveDrawer handleSideBarBtnAction={handleSideBarBtnAction}/>
     </ThemeProvider>
   );
 }
