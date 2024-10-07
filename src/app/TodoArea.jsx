@@ -7,6 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import AddModal from './AddModal';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const _rows = [
     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
@@ -16,44 +18,60 @@ const _rows = [
     createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-function createData(name, description, start, end, assignee) {
-    return { name, description, start, end, assignee };
+function createData(title, description, start, end, assignee) {
+    return { title, description, start, end, assignee };
 }
 
 const TodoArea = (props) => {
 
-const [rows, setRows] = useState(_rows)
+const [rows, setRows] = useState(_rows);
 
+const addRows = (title, description, start, end, assignee) => {
+    console.log("Adding row: " + title);
+    const newRow = createData(title, description, start, end, assignee);
+    setRows(prevRows => [...prevRows, newRow]);
+    rows.forEach(rows => {
+        console.log(rows.title, rows.assignee, rows.start, rows.end);
+    });
+}
 return (
-    <TableContainer component={Paper}>
-        <Table sx={{minWidth: 650 }} aria-label="todo table">
-            <TableHead>
-                <TableRow>
-                    <TableCell> Title </TableCell>
-                    <TableCell align="right">Description</TableCell>
-                    <TableCell align="right">Start</TableCell>
-                    <TableCell align="right">End</TableCell>
-                    <TableCell align="right">Assignees</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {rows.map((row) => (
-                    <TableRow
-                        key={row.name}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                        <TableCell component="th" scope="row">
-                            {row.name}
-                        </TableCell>
-                        <TableCell align="right">{row.description}</TableCell>
-                        <TableCell align="right">{row.start}</TableCell>
-                        <TableCell align="right">{row.end}</TableCell>
-                        <TableCell align="right">{row.assignee}</TableCell>
+    <div>
+        <AddModal addRows={addRows}/>
+        <TableContainer component={Paper}>
+            <Table sx={{minWidth: 650 }} aria-label="todo table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell> Title </TableCell>
+                        <TableCell align="right">Description</TableCell>
+                        <TableCell align="left">Start</TableCell>
+                        <TableCell align="left">End</TableCell>
+                        <TableCell align="right">Assignees</TableCell>
+                        <TableCell align="right"></TableCell>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    </TableContainer>
+                </TableHead>
+                <TableBody>
+                    {rows.map((row) => (
+                        <TableRow
+                            key={row.title}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {row.title}
+                            </TableCell>
+                            <TableCell align="right">{row.description}</TableCell>
+                            <TableCell align="left">{row.start}</TableCell>
+                            <TableCell align="left">{row.end}</TableCell>
+                            <TableCell align="right">{row.assignee}</TableCell>
+                            <TableCell align="center"> 
+                                <DeleteForeverIcon/>
+                            </TableCell>
+
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    </div>
   )
 }
 
