@@ -3,7 +3,7 @@ const Storage = {
         localStorage.setItem(key, JSON.stringify(array));
     },
 
-    load : (key) =>{
+    load : (key) => {
         const storedArray = localStorage.getItem(key);
         return storedArray ? JSON.parse(storedArray) : [];
     }

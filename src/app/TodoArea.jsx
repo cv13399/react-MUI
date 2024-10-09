@@ -9,61 +9,95 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import AddModal from './AddModal';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import dayjs from 'dayjs';
+import { red } from '@mui/material/colors';
+import Storage from './Storage';
 
-const _rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
+const saveKey = "TODO_LIST_SAVE_KEY";
+
+let _rows = [
+    createData('Feed the cat', 'Do it ASAP', dayjs("2024-1-13").format('YYYY/MM/DD').toString(), dayjs("2024-1-13").format('YYYY/MM/DD').toString(), "Allen", "done"),
+    createData('Do the dishes', 'Mom is angry already', dayjs("2024-2-20").format('YYYY/MM/DD').toString(), dayjs("2024-2-21").format('YYYY/MM/DD').toString(), "Eric", "progressing"),
+    createData('Throw the trash out', 'It stinks', dayjs().format('YYYY/MM/DD').toString(), dayjs().format('YYYY/MM/DD').toString(), "Chase", "progressing"),
+    createData('Pay the electricity bill', 'overdue', dayjs('2024-10-1').format('YYYY/MM/DD').toString(), dayjs('2024-10-10').format('YYYY/MM/DD').toString(), 'Mom', 'done'),
+    createData('Buy a birthday cake for Kathy', 'Chocolate flavor', dayjs('2024-12-12').format('YYYY/MM/DD').toString(), dayjs('2024-12-12').format('YYYY/MM/DD').toString(), 'Urin', 'todo'),
 ];
 
-function createData(title, description, start, end, assignee) {
-    return { title, description, start, end, assignee };
+function createData(title, description, start, end, assignee, status) {
+    return { title, description, start, end, assignee, status };
 }
 
 const TodoArea = (props) => {
 
-const [rows, setRows] = useState(_rows);
+let oldRows = Storage.load(saveKey).length > 0 ? Storage.load(saveKey) : _rows;
 
-const addRows = (title, description, start, end, assignee) => {
+const [rows, setRows] = useState(oldRows);
+
+const addRows = (title, description, start, end, assignee, status) => {
     console.log("Adding row: " + title);
-    const newRow = createData(title, description, start, end, assignee);
+
+    if (start === undefined) {
+        start = dayjs().format('YYYY/MM/DD').toString();
+    }
+
+    if (end === undefined) {
+        end = dayjs().add(7,'day').format('YYYY/MM/DD').toString();
+    }
+
+    const newRow = createData(title, description, start, end, assignee, status);
     setRows(prevRows => [...prevRows, newRow]);
-    rows.forEach(rows => {
-        console.log(rows.title, rows.assignee, rows.start, rows.end);
+    _rows.push(newRow);
+
+    rows.forEach(row => {
+        console.log(row.title, row.assignee, row.start, row.end);
     });
+
+    Storage.save(saveKey, rows);
 }
+
 return (
     <div>
         <AddModal addRows={addRows}/>
         <TableContainer component={Paper}>
             <Table sx={{minWidth: 650 }} aria-label="todo table">
                 <TableHead>
-                    <TableRow>
-                        <TableCell> Title </TableCell>
-                        <TableCell align="right">Description</TableCell>
-                        <TableCell align="left">Start</TableCell>
-                        <TableCell align="left">End</TableCell>
-                        <TableCell align="right">Assignees</TableCell>
-                        <TableCell align="right"></TableCell>
+                    <TableRow >
+                        <TableCell sx={{ fontWeight:"bold"}}> Title </TableCell>
+                        <TableCell sx={{ fontWeight:"bold"}} align="left">Description</TableCell>
+                        <TableCell sx={{ fontWeight:"bold"}} align="left">Status</TableCell>
+                        <TableCell sx={{ fontWeight:"bold"}} align="left">Start</TableCell>
+                        <TableCell sx={{ fontWeight:"bold"}} align="left">End</TableCell>
+                        <TableCell sx={{ fontWeight:"bold"}} align="left">Assignees</TableCell>
+                        <TableCell sx={{ fontWeight:"bold"}} align="left"></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rows.map((row) => (
                         <TableRow
-                            key={row.title}
+                            key={row.title + Date.now()}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
                                 {row.title}
                             </TableCell>
-                            <TableCell align="right">{row.description}</TableCell>
+                            <TableCell align="left">{row.description}</TableCell>
+                            <TableCell align="left"
+                                sx={{
+                                    color: row.status === 'done' ? 'green' : 
+                                           row.status === 'progressing' ? 'orange' : 
+                                           'white'
+                                }}
+                            >{row.status}</TableCell>
                             <TableCell align="left">{row.start}</TableCell>
                             <TableCell align="left">{row.end}</TableCell>
-                            <TableCell align="right">{row.assignee}</TableCell>
+                            <TableCell align="left">{row.assignee}</TableCell>
                             <TableCell align="center"> 
-                                <DeleteForeverIcon/>
+                                <DeleteForeverIcon sx={{ color: red[300] }} 
+                                    onClick={() => {
+                                    // console.log(row.title);
+                                    setRows((prevRows) => 
+                                        prevRows.filter((preRow) => preRow.title !== row.title));
+                                }}/>
                             </TableCell>
 
                         </TableRow>
